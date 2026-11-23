@@ -16,11 +16,16 @@ export function OnboardingOverlay() {
   const data = useAppData();
   const [page, setPage] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  if (!data || data.settings.onboardingDone) return null;
+  if (!data || (data.settings.onboardingDone && !leaving)) return null;
 
   const finish = () => {
+    // 바로 저장하고, 화면만 부드럽게 사라지게 한다.
+    actions.updateSettings({ onboardingDone: true });
     setLeaving(true);
-    setTimeout(() => actions.updateSettings({ onboardingDone: true }), 220);
+    setTimeout(() => {
+      setLeaving(false);
+      setPage(0);
+    }, 220);
   };
   const last = page === PAGES.length - 1;
   const { icon: Icon, text } = PAGES[page];
