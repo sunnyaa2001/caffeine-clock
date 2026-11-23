@@ -1,5 +1,5 @@
-import { CampusPicker } from '@/features/explore/CampusPicker';
+import { CafeList } from '@/features/explore/CafeList';
 
 export default function Page() {
-  return <CampusPicker />;
+  return <CafeList />;
 }

@@ -9,8 +9,8 @@ import { cn } from '@/components/ui/cn';
 import { BackBar, ScreenTitle } from '@/components/ui/PageHeader';
 import { SearchField } from '@/components/ui/SearchField';
 import { EmptyState } from '@/components/ui/States';
-import { CATEGORY_LABELS, drinksForCafe, getCafe, getCampus, servingText } from '@/data/catalog';
-import type { CampusId, Drink, DrinkCategory } from '@/data/types';
+import { CATEGORY_LABELS, drinksForCafe, getCafe, servingText } from '@/data/catalog';
+import type { Drink, DrinkCategory } from '@/data/types';
 
 type Sort = 'rank' | 'low' | 'high' | 'name';
 const SORTS: { value: Sort; label: string }[] = [
@@ -37,8 +37,7 @@ function sortDrinks(list: Drink[], sort: Sort) {
   return arr;
 }
 
-export function MenuBrowser({ campusId, cafeId }: { campusId: CampusId; cafeId: string }) {
-  const campus = getCampus(campusId)!;
+export function MenuBrowser({ cafeId }: { cafeId: string }) {
   const cafe = getCafe(cafeId)!;
   const all = drinksForCafe(cafeId);
   const [q, setQ] = useState('');
@@ -56,7 +55,7 @@ export function MenuBrowser({ campusId, cafeId }: { campusId: CampusId; cafeId: 
 
   return (
     <>
-      <BackBar fallback={`/explore/${campusId}/`} crumbs={[campus.name, cafe.brandName]} />
+      <BackBar fallback="/explore/" crumbs={['카페', cafe.brandName]} />
       <ScreenTitle title={cafe.brandName} />
       <SearchField value={q} onChange={setQ} placeholder="음료를 검색하세요" />
       <div className="mt-3">
@@ -76,7 +75,7 @@ export function MenuBrowser({ campusId, cafeId }: { campusId: CampusId; cafeId: 
         <ul className="mt-2 space-y-2.5">
           {list.map((d, i) => (
             <li key={d.id} className="animate-fade-up" style={{ animationDelay: `${Math.min(i, 8) * 25}ms` }}>
-              <DrinkCard drink={d} max={maxMg} href={`/explore/${campusId}/${cafeId}/${d.id}/`} />
+              <DrinkCard drink={d} max={maxMg} href={`/explore/${cafeId}/${d.id}/`} />
             </li>
           ))}
         </ul>

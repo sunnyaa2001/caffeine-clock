@@ -16,13 +16,14 @@ import { formatMg } from '@/lib/caffeine';
 import { HOUR, hm } from '@/lib/time';
 import { BedtimeSheet } from '@/features/shared/BedtimeSheet';
 import { IntakeTimeline } from './IntakeTimeline';
+import { MeaningCard } from '@/features/shared/CaffeineMeaning';
 
 export function TodayScreen() {
   const data = useAppData();
   const now = useNow();
   const m = useTodayModel(data, now);
   const [sheet, setSheet] = useState(false);
-  const exploreHref = data?.settings.lastCampusId ? `/explore/${data.settings.lastCampusId}/` : '/explore/';
+  const exploreHref = '/explore/';
 
   if (!m) return <Skeleton className="mt-16 h-[520px]" />;
 
@@ -74,6 +75,10 @@ export function TodayScreen() {
           약 {Math.round(m.atBed.low)}–{Math.round(m.atBed.high)} mg
         </span>
       </Card>
+
+      <div className="mt-3">
+        <MeaningCard mg={m.atBed.mid} dailyTotal={m.total} />
+      </div>
 
       <Card className="mt-3 px-3 pt-4 pb-3">
         <div className="mb-1 flex items-center justify-between px-2">

@@ -2,16 +2,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CalendarDays, Search, Sun } from 'lucide-react';
-import { useAppData } from '@/data/store';
 import { cn } from './cn';
 
 export function BottomNav() {
   const path = usePathname();
-  const data = useAppData();
-  const last = data?.settings.lastCampusId;
   const items = [
     { href: '/', label: '오늘', icon: Sun, active: path === '/' || path.startsWith('/today') },
-    { href: last ? `/explore/${last}/` : '/explore/', label: '음료 찾기', icon: Search, active: path.startsWith('/explore') },
+    { href: '/explore/', label: '음료 찾기', icon: Search, active: path.startsWith('/explore') },
     { href: '/history/', label: '기록', icon: CalendarDays, active: path.startsWith('/history') },
   ];
   return (

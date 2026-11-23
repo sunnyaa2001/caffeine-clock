@@ -14,13 +14,14 @@ import { useTodayModel } from '@/hooks/useTodayModel';
 import { formatMg } from '@/lib/caffeine';
 import { hm } from '@/lib/time';
 import { BedtimeSheet } from '@/features/shared/BedtimeSheet';
+import { MeaningLine } from '@/features/shared/CaffeineMeaning';
 
 export function HomeScreen() {
   const data = useAppData();
   const now = useNow();
   const m = useTodayModel(data, now);
   const [sheet, setSheet] = useState(false);
-  const exploreHref = data?.settings.lastCampusId ? `/explore/${data.settings.lastCampusId}/` : '/explore/';
+  const exploreHref = '/explore/';
 
   return (
     <>
@@ -79,6 +80,7 @@ export function HomeScreen() {
                 <span className="text-[22px] font-bold text-ink-2">mg</span>
               </p>
               <p className="mt-2 text-caption text-ink-3">일반적인 반감기를 적용한 추정치예요.</p>
+              <MeaningLine mg={m.atBed.mid} />
               <div className="-mx-1 mt-3">
                 <DecayChart variant="mini" doses={m.doses} start={m.chartStart} end={m.chartEnd} bedtime={m.bedtimeMs} now={now} />
               </div>

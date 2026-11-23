@@ -32,7 +32,7 @@ export function HistoryScreen() {
     return { days, stats: periodStats(days), insights: buildInsights(last14) };
   }, [data, now, range]);
 
-  const exploreHref = data?.settings.lastCampusId ? `/explore/${data.settings.lastCampusId}/` : '/explore/';
+  const exploreHref = '/explore/';
 
   return (
     <div className="pt-5">

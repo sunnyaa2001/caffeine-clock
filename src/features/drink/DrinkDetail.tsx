@@ -7,9 +7,8 @@ import { Card } from '@/components/ui/Card';
 import { BackBar } from '@/components/ui/PageHeader';
 import { StickyFooter } from '@/components/ui/StickyFooter';
 import { useToast } from '@/components/ui/Toast';
-import { getBrand, getCafe, getCampus, getDrink, servingText } from '@/data/catalog';
+import { getBrand, getCafe, getDrink, servingText } from '@/data/catalog';
 import { actions, bedtimeFor, useAppData } from '@/data/store';
-import type { CampusId } from '@/data/types';
 import { estimateAt, mgPerKg, toDoses } from '@/lib/caffeine';
 import { entriesAffecting } from '@/lib/summary';
 import { bedtimeAt, dayKeyOf } from '@/lib/time';
@@ -22,11 +21,10 @@ const BASIS: Record<string, string> = {
   unverified: '카페인 정보가 확인되지 않은 메뉴예요.',
 };
 
-export function DrinkDetail({ campusId, cafeId, drinkId }: { campusId: CampusId; cafeId: string; drinkId: string }) {
+export function DrinkDetail({ cafeId, drinkId }: { cafeId: string; drinkId: string }) {
   const drink = getDrink(drinkId)!;
   const cafe = getCafe(cafeId)!;
   const brand = getBrand(drink.brandId);
-  const campus = getCampus(campusId)!;
   const data = useAppData();
   const now = useNow();
   const router = useRouter();
@@ -60,7 +58,7 @@ export function DrinkDetail({ campusId, cafeId, drinkId }: { campusId: CampusId;
 
   return (
     <>
-      <BackBar fallback={`/explore/${campusId}/${cafeId}/`} crumbs={[campus.name, cafe.brandName]} />
+      <BackBar fallback={`/explore/${cafeId}/`} crumbs={['카페', cafe.brandName]} />
       <section className="pt-3 pb-8">
         <p className="text-sub font-semibold text-ink-3">{cafe.brandName}</p>
         <h1 className="mt-1 text-title font-bold">{drink.name}</h1>

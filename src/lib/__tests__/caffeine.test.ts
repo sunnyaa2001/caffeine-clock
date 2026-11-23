@@ -93,3 +93,18 @@ describe('인사이트', () => {
     expect(out[2]).toContain('12% 줄었어요');
   });
 });
+
+import { interpret, similarDrink } from '../interpret';
+describe('잔존량 해석', () => {
+  it('구간', () => {
+    expect(interpret(0.5).level).toBe(0);
+    expect(interpret(30).level).toBe(1);
+    expect(interpret(58).level).toBe(2);
+    expect(interpret(120).level).toBe(3);
+    expect(interpret(250).level).toBe(4);
+  });
+  it('비슷한 실제 메뉴', () => {
+    expect(similarDrink(75)).toContain('75 mg');
+    expect(similarDrink(10)).toBeNull();
+  });
+});
