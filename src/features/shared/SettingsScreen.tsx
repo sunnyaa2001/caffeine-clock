@@ -7,6 +7,8 @@ import { Skeleton } from '@/components/ui/States';
 import { Toggle } from '@/components/ui/Toggle';
 import { useToast } from '@/components/ui/Toast';
 import { actions, useAppData } from '@/data/store';
+import { useSync } from '@/data/remote';
+import { isRemoteMode } from '@/config/backend';
 import { buildDemo } from '@/lib/demo';
 import { dailySummaryCsv, download, entriesCsv } from '@/lib/export';
 import { ymd } from '@/lib/time';
@@ -15,7 +17,9 @@ export function SettingsScreen() {
   const data = useAppData();
   const toast = useToast();
   const [weight, setWeight] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<'reset' | 'demo' | null>(null);
+  const [confirm, setConfirm] = useState<'reset' | 'demo' | 'logout' | null>(null);
+  const sync = useSync();
+  const remote = isRemoteMode();
   if (!data) return <Skeleton className="mt-16 h-96" />;
   const s = data.settings;
   const weightValue = weight ?? (s.weightKg ? String(s.weightKg) : '');
@@ -26,7 +30,7 @@ export function SettingsScreen() {
     actions.updateSettings({ weightKg: v });
     setWeight(null);
   };
-  const twoStep = (kind: 'reset' | 'demo', run: () => void) => {
+  const twoStep = (kind: 'reset' | 'demo' | 'logout', run: () => void) => {
     if (confirm !== kind) return setConfirm(kind);
     run();
     setConfirm(null);
@@ -37,6 +41,22 @@ export function SettingsScreen() {
       <BackBar fallback="/" />
       <ScreenTitle title="설정" />
 
+      {remote && sync?.code && (
+        <>
+          <SectionTitle>연구 참여</SectionTitle>
+          <Card className="divide-y divide-line px-5">
+            <Row title="입장코드" desc={sync.pending === 0 ? '모든 기록이 서버에 저장됐어요.' : sync.offline ? `인터넷이 연결되면 기록 ${sync.pending}개를 이어서 보낼게요.` : `기록 ${sync.pending}개를 보내는 중이에요.`}>
+              <span className="num text-body font-bold tracking-wider">{sync.code}</span>
+            </Row>
+            <ActionRow
+              title={confirm === 'logout' ? '한 번 더 누르면 이 기기에서 나가요' : '이 기기에서 나가기'}
+              desc={sync.pending > 0 ? '아직 보내지 못한 기록이 있어요. 인터넷 연결 후 나가주세요.' : '기록은 서버에 남아 있어요. 같은 코드로 다시 들어올 수 있어요.'}
+              onClick={() => sync.pending === 0 && twoStep('logout', () => actions.logout())}
+            />
+          </Card>
+        </>
+      )}
+
       <SectionTitle>추가 정보</SectionTitle>
       <Card className="px-5 py-4">
         <label className="flex items-center justify-between gap-4">
@@ -44,7 +64,7 @@ export function SettingsScreen() {
             <span className="block text-body font-semibold">체중 (선택)</span>
             <span className="mt-0.5 block text-caption text-ink-3">mg/kg 보조 정보에만 쓰고, 계산에는 쓰지 않아요.</span>
           </span>
-          <span className="flex items-center gap-1.5 rounded-xl bg-fill px-3">
+          <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-fill px-3">
             <input
               inputMode="decimal"
               value={weightValue}
@@ -55,7 +75,7 @@ export function SettingsScreen() {
               className="num h-11 w-14 bg-transparent text-right text-body font-semibold outline-none"
               aria-label="체중 kg"
             />
-            <span className="text-sub text-ink-3">kg</span>
+            <span className="shrink-0 text-sub text-ink-3">kg</span>
           </span>
         </label>
       </Card>
@@ -80,6 +100,7 @@ export function SettingsScreen() {
         />
         <ActionRow title="섭취 기록 내보내기 (CSV)" onClick={() => download(`caffeine-entries-${ymd(new Date())}.csv`, entriesCsv(data.entries))} />
         <ActionRow title="소개 화면 다시 보기" onClick={() => actions.updateSettings({ onboardingDone: false })} />
+        {!remote && (<>
         <ActionRow
           title={confirm === 'demo' ? '한 번 더 누르면 지금 기록이 예시로 바뀌어요' : '예시 기록 채우기 (발표·테스트용)'}
           desc="지난 13일의 예시 기록을 넣어요. 음료와 카페인 값은 실제 메뉴 데이터예요."
@@ -99,8 +120,11 @@ export function SettingsScreen() {
             })
           }
         />
+        </>)}
       </Card>
-      <p className="mt-6 px-1 text-caption text-ink-3">모든 기록은 이 기기의 브라우저에만 저장돼요.</p>
+      <p className="mt-6 px-1 text-caption text-ink-3">
+        {remote ? '기록은 입장코드로 연구팀 서버에 저장돼요. 이름 같은 개인정보는 저장하지 않아요.' : '모든 기록은 이 기기의 브라우저에만 저장돼요.'}
+      </p>
     </>
   );
 }

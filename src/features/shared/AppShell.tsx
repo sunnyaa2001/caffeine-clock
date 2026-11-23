@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { ToastProvider } from '@/components/ui/Toast';
 import { OnboardingOverlay } from '@/features/onboarding/OnboardingOverlay';
+import { EntryGate } from './EntryGate';
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       <BottomNav />
       <OnboardingOverlay />
+      <EntryGate />
     </ToastProvider>
   );
 }
