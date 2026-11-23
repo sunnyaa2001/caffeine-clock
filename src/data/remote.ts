@@ -67,7 +67,8 @@ export async function rpc<T = unknown>(fn: string, args: Record<string, unknown>
       method: 'POST',
       headers: {
         apikey: BACKEND.supabaseAnonKey,
-        Authorization: `Bearer ${BACKEND.supabaseAnonKey}`,
+        // 예전 anon key(JWT)일 때만 Authorization에도 넣는다. 새 publishable key는 apikey 헤더만 쓴다.
+        ...(BACKEND.supabaseAnonKey.startsWith('eyJ') ? { Authorization: `Bearer ${BACKEND.supabaseAnonKey}` } : {}),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(args),
