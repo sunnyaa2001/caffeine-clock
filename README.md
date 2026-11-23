@@ -53,3 +53,8 @@ npm run build      # 정적 사이트를 out/ 에 생성 (어디에나 업로드
 ## 배포
 
 `npm run build` 후 `out/` 폴더를 Vercel, Netlify, GitHub Pages 등에 올리면 됩니다.
+
+## 웹 링크(Claude 아티팩트) 빌드
+
+`npm run build:artifact` → `web-artifact/dist/` 에 단일 페이지 버전(index.html + app.js)이 만들어집니다.
+같은 화면 코드를 쓰고, Next.js 라우팅만 메모리 라우터로 바꿔 끼웁니다. 아티팩트 안에서는 CSV 파일 저장이 막혀 있습니다.
